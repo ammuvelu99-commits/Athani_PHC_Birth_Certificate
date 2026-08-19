@@ -10,8 +10,8 @@
       --muted: #5c6b7a;
       --line: #d7dee6;
       --paper: #ffffff;
-      --ink-blue: #1303f1;
-      --font-indigo: #283593;
+      --ink-blue: #0000F4;
+      --font-indigo: #0000F4;
       --maroon: #7a1c28;
       --navy: #0c3d4a;
       --gold: #c4a35a;
@@ -536,22 +536,37 @@
     .val.multi {
       min-height: 42px;
       line-height: 20px;
-      background-image: linear-gradient(
-        to bottom,
-        transparent 19px,
-        var(--ink-blue) 19px,
-        var(--ink-blue) 20px,
-        transparent 20px,
-        transparent 39px,
-        var(--ink-blue) 39px,
-        var(--ink-blue) 40px,
-        transparent 40px
-      );
-      background-repeat: no-repeat;
-      background-size: 100% 42px;
-      border-bottom: 0;
+      position: relative;
+      background: none !important;
+      border-bottom: 0 !important;
       padding: 0 0 2px;
       overflow-wrap: anywhere;
+    }
+
+    /* Real lines are used instead of a CSS background so they print reliably. */
+    .val.multi::before,
+    .val.multi::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 0;
+      border-top: 1px solid var(--ink-blue);
+      pointer-events: none;
+    }
+
+    .val.multi::before {
+      top: 20px;
+    }
+
+    .val.multi::after {
+      top: 40px;
+      display: none;
+    }
+
+    /* Show the second address underline only when text actually occupies a second line. */
+    .val.multi.has-second-line::after {
+      display: block;
     }
 
     .sign-row {
@@ -684,6 +699,29 @@
       }
 
       .no-print { display: none !important; }
+
+      /* Force certificate underlines to print in every browser. */
+      .val {
+        border-bottom: 1px solid var(--ink-blue) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .val.multi {
+        border-bottom: 0 !important;
+        background: none !important;
+      }
+
+      .val.multi::before,
+      .val.multi.has-second-line::after {
+        border-top: 1px solid var(--ink-blue) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .value-red {
+        border-bottom-color: #c01818 !important;
+      }
 
       .app, .workspace, .preview-pane, .paper-viewport, .paper-scale {
         display: block !important;
@@ -1238,6 +1276,38 @@
         });
       }
 
+      function updateAddressLineState() {
+        document.querySelectorAll(".val.multi").forEach(function (el) {
+          el.classList.remove("has-second-line");
+
+          const textValue = (el.textContent || "").trim();
+          if (!textValue || textValue === "—") return;
+
+          const textNode = Array.prototype.find.call(el.childNodes, function (n) {
+            return n.nodeType === Node.TEXT_NODE && n.textContent.trim();
+          });
+
+          if (!textNode) return;
+
+          const range = document.createRange();
+          range.selectNodeContents(textNode);
+          const rects = Array.from(range.getClientRects()).filter(function (r) {
+            return r.width > 0 && r.height > 0;
+          });
+
+          const uniqueTops = [];
+          rects.forEach(function (r) {
+            if (!uniqueTops.some(function (t) { return Math.abs(t - r.top) < 2; })) {
+              uniqueTops.push(r.top);
+            }
+          });
+
+          if (uniqueTops.length > 1 || textValue.indexOf("\n") !== -1) {
+            el.classList.add("has-second-line");
+          }
+        });
+      }
+
       function syncPreview() {
         document.querySelectorAll("[data-bind]").forEach(function (el) {
           const key = el.getAttribute("data-bind");
@@ -1252,6 +1322,8 @@
         document.getElementById("issueDateOut").textContent = formatDateNum(form.issueDate.value);
         const pre = preambleHtml();
         document.getElementById("preambleEn").innerHTML = pre.en;
+
+        requestAnimationFrame(updateAddressLineState);
       }
 
       function persist() {
@@ -1403,6 +1475,10 @@
       fitPaper();
       setTimeout(fitPaper, 50);
     })();
-  </script>
+  
+      window.addEventListener("beforeprint", function () {
+        updateAddressLineState();
+      });
+</script>
 </body>
 </html>
