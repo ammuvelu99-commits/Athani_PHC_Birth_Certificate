@@ -508,6 +508,7 @@
       top: 0;
       color: var(--font-indigo);
       font-weight: 800;
+      color: #2b3f8f;
     }
     .rows .row:first-child .lbl {
       font-size: 13.2px;
@@ -530,7 +531,7 @@
     }
     .value-red {
       color: #c01818 !important;
-      border-bottom-color: #c01818 !important;
+      border-bottom-color: var(--ink-blue) !important;
     }
 
     .val.multi {
@@ -618,16 +619,38 @@
     }
 
     .signature-box {
-      margin-top: 2px;
+      margin-top: -14px;
       margin-left: auto;
-      width: 46%;
+      width: 52%;
       text-align: right;
-      font-size: 13.4px;
-      line-height: 1.35;
+      font-size: 12.8px;
+      line-height: 1.28;
       font-weight: 800;
     }
 
-    .sign-space { height: 34px; }
+    .registrar-designation {
+      margin-bottom: 7px;
+      font-size: 14.2px;
+      line-height: 1.22;
+      color: #173f78;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+    }
+    .registrar-designation .seal-health-inspector,
+    .registrar-designation .seal-registrar,
+    .registrar-designation #registrarPlace {
+      color: #173f78 !important;
+      font-weight: 900 !important;
+    }
+    .signature-label {
+      font-size: 10.9px;
+      line-height: 1.25;
+      font-weight: 700;
+      color: var(--font-indigo);
+    }
+    .registrar-designation [lang="ta"] { font-family: var(--tamil); }
+
+    .sign-space { height: 12px; }
 
     .slogan {
       text-align: center;
@@ -640,7 +663,7 @@
       display: block;
       position: relative;
       z-index: 2;
-      transform: translateY(-11px);
+      transform: translateY(-5px);
     }
 
     .specimen {
@@ -675,6 +698,36 @@
       font-size: 8px;
       color: #888;
       font-family: var(--ui);
+    }
+
+
+    /* Tamil registrar seal block: larger seal text, smaller signature label */
+    .signature-box {
+      margin-top: -14px;
+      line-height: 1.18;
+      color: var(--font-indigo);
+      text-align: center;
+    }
+    .signature-box .registrar-designation {
+      text-align: center;
+      font-size: 14.2px;
+      font-weight: 900;
+      line-height: 1.18;
+      color: #173f78;
+    }
+    .signature-box .seal-health-inspector,
+    .signature-box .seal-registrar,
+    .signature-box #registrarPlace {
+      color: #173f78 !important;
+      font-weight: 900 !important;
+    }
+    .signature-box .signature-label {
+      color: var(--font-indigo);
+      font-weight: 700;
+      font-size: 10.9px;
+      line-height: 1.2;
+      letter-spacing: 0;
+      text-shadow: none;
     }
 
     @media (max-width: 980px) {
@@ -720,7 +773,7 @@
       }
 
       .value-red {
-        border-bottom-color: #c01818 !important;
+        border-bottom-color: var(--ink-blue) !important;
       }
 
       .app, .workspace, .preview-pane, .paper-viewport, .paper-scale {
@@ -739,14 +792,27 @@
 
       .certificate {
         width: 210mm;
-        height: 296mm;
+        height: 297mm;
         margin: 0;
+        padding: 5mm 6mm !important;
         box-shadow: none !important;
         transform: none !important;
         overflow: hidden !important;
         page-break-after: avoid;
         page-break-inside: avoid;
       }
+
+      .cert-frame { padding: 10px 16px 6px !important; }
+      .rows { margin-top: 11px !important; }
+      .row { margin-bottom: 4px !important; }
+      .row.tall { margin-top: 9px !important; margin-bottom: 9px !important; }
+      .row.tall + .row.tall { margin-top: 10px !important; }
+      .sign-row { margin-top: 1px !important; }
+      .seal-box { margin-top: 5px !important; margin-bottom: 2px !important; }
+      .sign-space { height: 8px !important; }
+      .registrar-designation { margin-bottom: 4px !important; font-size: 13.2px !important; line-height: 1.18 !important; }
+      .signature-label { font-size: 10.2px !important; line-height: 1.2 !important; }
+      .slogan { margin-top: 0 !important; margin-bottom: 2px !important; transform: translateY(-2px) !important; font-size: 10px !important; }
 
       /* Print-only safeguard: keeps the double bottom border inside one A4 page. */
       .cert-outer,
@@ -848,8 +914,12 @@
             <div class="section">
               <h2 data-i18n="secReg">Registration</h2>
               <div class="field">
-                <label for="localBody" data-i18n="localBody">Local area / local body</label>
-                <input id="localBody" name="localBody" type="text" value="GOVERNMENT PRIMARY HEALTH CENTRE - ATHANI" readonly />
+                <label for="facility" data-i18n="localBody">Local area / local body</label>
+                <select id="facility" name="facility" aria-label="Select Primary Health Centre">
+                  <option value="ATHANI">Government Primary Health Centre - Athani / அரசு ஆரம்ப சுகாதார நிலையம் - அத்தாணி</option>
+                  <option value="ENNAMANGALAM">Government Primary Health Centre - Ennamangalam / அரசு ஆரம்ப சுகாதார நிலையம் - எண்ணமங்கலம்</option>
+                </select>
+                <input id="localBody" name="localBody" type="hidden" value="GOVERNMENT PRIMARY HEALTH CENTRE - ATHANI" />
               </div>
               <div class="grid-2">
                 <div class="field">
@@ -1008,7 +1078,10 @@
                     <div class="sign-space"></div>
                   </div>
                   <div class="sign-box signature-box">
-                    Signature of Issuing Authority /<br>சான்றிதழ் அளிப்பவரின் கையொப்பம்
+                    <div class="registrar-designation" id="registrarDesignation" lang="ta">
+                      <span class="seal-health-inspector">சுகாதார ஆய்வாளர் மற்றும்</span><br><span class="seal-registrar">பிறப்பு இறப்பு பதிவாளர்</span><br><span id="registrarPlace">அத்தாணி, அந்தியூர்</span>
+                    </div>
+                    <div class="signature-label">Signature of Issuing Authority /<br>சான்றிதழ் அளிப்பவரின் கையொப்பம்</div>
                     <div class="sign-space"></div>
                   </div>
                 </div>
@@ -1025,7 +1098,7 @@
 
   <script>
     (function () {
-      const STORAGE_KEY = "tn-form5-birth-cert-v1";
+      const STORAGE_KEY = "tn-form5-birth-cert-v2-facility";
       const GENDER = {
         Male: { en: "MALE", ta: "ஆண்" },
         Female: { en: "FEMALE", ta: "பெண்" },
@@ -1150,7 +1223,20 @@
       const DAYS_TA = ["", "ஒன்று", "இரண்டு", "மூன்று", "நான்கு", "ஐந்து", "ஆறு", "ஏழு", "எட்டு", "ஒன்பது", "பத்து", "பதினொன்று", "பன்னிரண்டு", "பதின்மூன்று", "பதினான்கு", "பதினைந்து", "பதினாறு", "பதினேழு", "பதினெட்டு", "பத்தொன்பது", "இருபது", "இருபத்தொன்று", "இருபத்திரண்டு", "இருபத்திமூன்று", "இருபத்திநான்கு", "இருபத்தைந்து", "இருபத்தாறு", "இருபத்தேழு", "இருபத்தெட்டு", "இருபத்தொன்பது", "முப்பது", "முப்பத்தொன்று"];
 
       const form = document.getElementById("certForm");
-      const FIXED_LOCAL_BODY = "GOVERNMENT PRIMARY HEALTH CENTRE - ATHANI";
+      const FACILITIES = {
+        ATHANI: {
+          en: "GOVERNMENT PRIMARY HEALTH CENTRE - ATHANI",
+          ta: "அரசு ஆரம்ப சுகாதார நிலையம் - அத்தாணி",
+          registrarEn: "Health Inspector & Registrar of Births and Deaths, Government Primary Health Centre - Athani, Anthiyur",
+          registrarTa: "<span class=\"seal-health-inspector\">சுகாதார ஆய்வாளர் மற்றும்</span><br><span class=\"seal-registrar\">பிறப்பு இறப்பு பதிவாளர்</span><br><span id=\"registrarPlace\">அத்தாணி, அந்தியூர்</span>"
+        },
+        ENNAMANGALAM: {
+          en: "GOVERNMENT PRIMARY HEALTH CENTRE - ENNAMANGALAM",
+          ta: "அரசு ஆரம்ப சுகாதார நிலையம் - எண்ணமங்கலம்",
+          registrarEn: "Health Inspector & Registrar of Births and Deaths, Government Primary Health Centre - Ennamangalam, Anthiyur",
+          registrarTa: "<span class=\"seal-health-inspector\">சுகாதார ஆய்வாளர் மற்றும்</span><br><span class=\"seal-registrar\">பிறப்பு இறப்பு பதிவாளர்</span><br><span id=\"registrarPlace\">எண்ணமங்கலம், அந்தியூர்</span>"
+        }
+      };
       const FIXED_TALUK = "ANTHIYUR";
       const FIXED_DISTRICT = "ERODE";
       const FIXED_STATE = "TAMIL NADU";
@@ -1168,6 +1254,7 @@
         fatherUid: "XXXX XXXX XXXX",
         addrBirth: "Athani, Anthiyur Taluk, Erode District, Tamil Nadu",
         addrPerm: "Athani, Anthiyur Taluk, Erode District, Tamil Nadu",
+        facility: "ATHANI",
         localBody: "GOVERNMENT PRIMARY HEALTH CENTRE - ATHANI",
         taluk: "ANTHIYUR",
         district: "ERODE",
@@ -1257,16 +1344,31 @@
         syncPreview();
       }
 
+      function selectedFacility() {
+        return FACILITIES[form.facility.value] || FACILITIES.ATHANI;
+      }
+
+      function updateFacilityDependentText() {
+        const f = selectedFacility();
+        form.localBody.value = f.en;
+        const reg = document.getElementById("registrarDesignation");
+        if (reg) {
+          reg.innerHTML = f.registrarTa;
+        }
+      }
+
       function preambleHtml() {
-        const localBody = escapeHtml(FIXED_LOCAL_BODY);
+        const f = selectedFacility();
+        const localBody = escapeHtml(f.en);
+        const localBodyTa = escapeHtml(f.ta);
         const taluk = escapeHtml(FIXED_TALUK);
         const district = escapeHtml(FIXED_DISTRICT);
         const state = escapeHtml(FIXED_STATE);
-        form.localBody.value = FIXED_LOCAL_BODY;
+        form.localBody.value = f.en;
         form.taluk.value = FIXED_TALUK;
         form.district.value = FIXED_DISTRICT;
         const en = "This is to certify that the following information has been taken from the original record of Birth which is the register for (local area / local body) <strong>" + localBody + "</strong> of Taluk <strong>" + taluk + "</strong> of District <strong>" + district + "</strong> of State <strong>" + state + "</strong>.";
-        const ta = "<span class='ta-flow'> கீழ்க்கண்ட தகவல்கள் இந்தியா, தமிழ்நாடு மாநிலம், <strong>ஈரோடு</strong> மாவட்டம், <strong>அந்தியூர்</strong> வட்டம், <strong>அரசு ஆரம்ப சுகாதார நிலையம் - அத்தாணி</strong> சேர்ந்த அசல் பிறப்புப் பதிவேட்டிலிருந்து எடுக்கப்பட்டவை என சான்றளிக்கப்படுகிறது.</span>";
+        const ta = "<span class='ta-flow'> கீழ்க்கண்ட தகவல்கள் இந்தியா, தமிழ்நாடு மாநிலம், <strong>ஈரோடு</strong> மாவட்டம், <strong>அந்தியூர்</strong> வட்டம், <strong>" + localBodyTa + "</strong> சேர்ந்த அசல் பிறப்புப் பதிவேட்டிலிருந்து எடுக்கப்பட்டவை என சான்றளிக்கப்படுகிறது.</span>";
         return { en: en + ta };
       }
 
@@ -1309,6 +1411,7 @@
       }
 
       function syncPreview() {
+        updateFacilityDependentText();
         document.querySelectorAll("[data-bind]").forEach(function (el) {
           const key = el.getAttribute("data-bind");
           const node = form.elements[key];
