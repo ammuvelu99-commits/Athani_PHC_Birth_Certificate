@@ -141,7 +141,7 @@
     .workspace {
       flex: 1;
       display: grid;
-      grid-template-columns: 420px 1fr;
+      grid-template-columns: 420px minmax(0, 1fr) 235px;
       min-height: 0;
     }
 
@@ -1801,6 +1801,162 @@
       }
     }
 
+  
+    /* v58 — database controls below Print button */
+    .top-actions {
+      align-items: flex-start !important;
+    }
+    .action-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 7px;
+      min-width: 560px;
+    }
+    .action-stack .btn-print {
+      align-self: flex-end;
+    }
+    .db-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 7px;
+      width: 100%;
+    }
+    .db-search-input {
+      width: 235px;
+      height: 36px;
+      border: 1px solid rgba(255,255,255,.55);
+      background: #fff;
+      color: #17212b;
+      border-radius: 9px;
+      padding: 0 11px;
+      font: inherit;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .db-search-input:focus {
+      border-color: #f0d78a;
+      box-shadow: 0 0 0 2px rgba(240,215,138,.25);
+    }
+    @media (max-width: 1080px) {
+      .topbar {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+      .action-stack {
+        min-width: min(100%, 560px);
+      }
+      .db-toolbar {
+        flex-wrap: wrap;
+      }
+      .db-search-input {
+        flex: 1 1 220px;
+      }
+    }
+    @media print {
+      .action-stack, .db-toolbar, .db-search-input { display: none !important; }
+    }
+
+  
+    /* v59 — database tools as a right-side portrait panel */
+    .top-actions {
+      align-items: center !important;
+    }
+    .db-side-pane {
+      background: #f7fafc;
+      border-left: 1px solid var(--line);
+      overflow: auto;
+      padding: 18px 14px 28px;
+      min-width: 0;
+    }
+    .db-side-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 15px 14px;
+      position: sticky;
+      top: 16px;
+    }
+    .db-side-title {
+      margin: 0 0 12px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid #edf2f6;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--teal);
+      font-weight: 750;
+    }
+    .db-side-label {
+      display: block;
+      margin: 0 0 6px;
+      font-size: 12px;
+      font-weight: 650;
+      color: #3c4a57;
+      line-height: 1.35;
+    }
+    .db-side-input {
+      width: 100%;
+      height: 38px;
+      margin: 0 0 10px;
+      padding: 0 10px;
+      border: 1px solid #cfd8e0;
+      border-radius: 8px;
+      background: #fcfdfe;
+      color: var(--ink);
+      font: inherit;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .db-side-input:focus {
+      border-color: #2a8a94;
+      box-shadow: 0 0 0 3px rgba(13, 92, 99, .12);
+    }
+    .db-side-btn {
+      display: block;
+      width: 100%;
+      min-height: 39px;
+      margin: 0 0 9px;
+      border-radius: 9px;
+      font: inherit;
+      font-size: 12.5px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+    .db-side-btn:last-child {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 1180px) {
+      .workspace {
+        grid-template-columns: 380px minmax(0, 1fr) 210px !important;
+      }
+    }
+    @media (max-width: 980px) {
+      .workspace {
+        grid-template-columns: 1fr !important;
+      }
+      .form-pane {
+        max-height: none !important;
+      }
+      .db-side-pane {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+      .db-side-card {
+        position: static;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+    }
+    @media print {
+      .db-side-pane {
+        display: none !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1825,9 +1981,6 @@
           <button type="button" id="langEn" class="active">English</button>
           <button type="button" id="langTa">தமிழ்</button>
         </div>
-        <button type="button" class="btn-db" id="saveBtn">Save</button>
-        <button type="button" class="btn-db" id="searchBtn">Search</button>
-        <button type="button" class="btn-db" id="updateBtn">Update</button>
         <button type="button" class="btn-print" id="printBtn" data-i18n="printBtn">Print Certificate / Save as PDF</button>
       </div>
     </header>
@@ -2080,6 +2233,24 @@
           </article>
         </div>
       </div>
+
+      <aside class="db-side-pane no-print" aria-label="Database tools">
+        <div class="db-side-card">
+          <h2 class="db-side-title">Database Search</h2>
+          <label class="db-side-label" for="dbSearchQuery">Child Name or Registration No.</label>
+          <input
+            type="text"
+            id="dbSearchQuery"
+            class="db-side-input"
+            placeholder="Child Name or Registration No."
+            autocomplete="off"
+            aria-label="Child Name or Registration No."
+          />
+          <button type="button" class="btn-db db-side-btn" id="searchBtn">Search</button>
+          <button type="button" class="btn-db db-side-btn" id="saveBtn">Save</button>
+          <button type="button" class="btn-db db-side-btn" id="updateBtn">Update</button>
+        </div>
+      </aside>
     </div>
   </div>
 
@@ -2567,7 +2738,7 @@
         persist();
       });
       // Google Sheets / Apps Script connection. Paste the deployed /exec URL here.
-      const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaLQpiie--tsADLmR8slmUEExxMRvbJh5SUGlBUV5PAH1Mul4Pv0dFpcmKd-qAZaYk/exec";
+      const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgcw6TB_Y6MjkotQbVOS0MxmI3PV2o2hIjnK-Q89MKCVYA7HZA3ErMcqzrXoeXwKP4/exec";
 
       function collectDbRecord() {
         const record = {};
@@ -2596,7 +2767,16 @@
         }
 
         const regNo = String((form.elements.regNo && form.elements.regNo.value) || "").trim();
-        if (!regNo) {
+        const searchInput = document.getElementById("dbSearchQuery");
+        const searchQuery = String((searchInput && searchInput.value) || "").trim();
+
+        if (action === "search") {
+          if (!searchQuery) {
+            alert("Please enter Child Name or Registration No. in the search box.");
+            if (searchInput) searchInput.focus();
+            return;
+          }
+        } else if (!regNo) {
           alert("Please enter Registration No.");
           if (form.elements.regNo) form.elements.regNo.focus();
           return;
@@ -2606,7 +2786,7 @@
         const btn = document.getElementById(btnId);
         const oldText = btn.textContent;
         const payload = action === "search"
-          ? { action: "search", regNo: regNo }
+          ? { action: "search", query: searchQuery }
           : { action: action, data: collectDbRecord() };
 
         try {
@@ -2624,6 +2804,11 @@
 
           if (action === "search") {
             applyDbRecord(result.data);
+            if (searchInput) {
+              searchInput.value = result.data && (result.data.childName || result.data.regNo)
+                ? (result.data.childName || result.data.regNo)
+                : searchQuery;
+            }
             alert("Record loaded. You can edit the form and click Update.");
           } else {
             alert(action === "update" ? "Record updated successfully." : "Record saved successfully.");
@@ -2639,6 +2824,12 @@
       document.getElementById("saveBtn").addEventListener("click", function () { dbRequest("save"); });
       document.getElementById("searchBtn").addEventListener("click", function () { dbRequest("search"); });
       document.getElementById("updateBtn").addEventListener("click", function () { dbRequest("update"); });
+      document.getElementById("dbSearchQuery").addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          dbRequest("search");
+        }
+      });
 
       document.getElementById("printBtn").addEventListener("click", function () {
         window.print();
